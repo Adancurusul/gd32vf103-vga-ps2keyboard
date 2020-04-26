@@ -173,9 +173,7 @@ void vga_timer_config(void) {
 	rcu_periph_clock_enable(RCU_TIMER2);
 	//rcu_periph_clock_enable(RCU_TIMER3);
 	timer_deinit(TIMER2);
-	/* initialize TIMER init parameter struct */
 	timer_struct_para_init(&timer_initpara);
-	/* TIMER1 configuration */
 	timer_initpara.prescaler = 0;
 	timer_initpara.alignedmode = TIMER_COUNTER_EDGE;
 	timer_initpara.counterdirection = TIMER_COUNTER_UP;
@@ -184,9 +182,7 @@ void vga_timer_config(void) {
 	timer_initpara.repetitioncounter = 0;
 	timer_init(TIMER2, &timer_initpara);
 
-	/* initialize TIMER channel output parameter struct */
 	timer_channel_output_struct_para_init(&timer_ocinitpara);
-	/* CH0, CH1 and CH2 configuration in PWM mode */
 	timer_ocinitpara.outputstate = TIMER_CCX_ENABLE;
 	timer_ocinitpara.outputnstate = TIMER_CCXN_DISABLE;
 	timer_ocinitpara.ocpolarity = TIMER_OC_POLARITY_HIGH;

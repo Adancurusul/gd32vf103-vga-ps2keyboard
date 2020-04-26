@@ -153,15 +153,15 @@ void ps2_gpio_init(void) {
 	rcu_periph_clock_enable(RCU_GPIOA);
 	rcu_periph_clock_enable(RCU_GPIOB);
 	rcu_periph_clock_enable(RCU_GPIOC);
-	gpio_init(GPIOA, GPIO_MODE_OUT_PP, GPIO_OSPEED_50MHZ, LED_G);
-	gpio_init(GPIOA, GPIO_MODE_OUT_PP, GPIO_OSPEED_50MHZ, LED_B);
-	gpio_init(GPIOC, GPIO_MODE_OUT_PP, GPIO_OSPEED_50MHZ, LED_R);
+	//gpio_init(GPIOA, GPIO_MODE_OUT_PP, GPIO_OSPEED_50MHZ, LED_G);
+	//gpio_init(GPIOA, GPIO_MODE_OUT_PP, GPIO_OSPEED_50MHZ, LED_B);
+	//gpio_init(GPIOC, GPIO_MODE_OUT_PP, GPIO_OSPEED_50MHZ, LED_R);
 	gpio_init(GPIOA, GPIO_MODE_IPU, GPIO_OSPEED_50MHZ, PS2_CLK);
 	gpio_init(GPIOA, GPIO_MODE_IPU, GPIO_OSPEED_50MHZ, PS2_DATA);
 	gpio_init(GPIOA, GPIO_MODE_IPU, GPIO_OSPEED_50MHZ, CLR_PIN);
-	GPIO_BOP(GPIOA) = LED_B;
-	GPIO_BOP(GPIOA) = LED_G;
-	GPIO_BOP(GPIOC) = LED_R;
+	//GPIO_BOP(GPIOA) = LED_B;
+	//GPIO_BOP(GPIOA) = LED_G;
+	//GPIO_BOP(GPIOC) = LED_R;
 	//GPIO_BOP(GPIOA) = PS2_CLK;
 }
 /*!
@@ -189,14 +189,11 @@ void EXTI0_IRQHandler(void) {
 	ps2_check = 0;
 	if (RESET != exti_interrupt_flag_get(EXTI_0)) {
 		state_now = gpio_input_bit_get(GPIOA, PS2_DATA);
-		//printf("bitbefore%d\n",ps2_bit_count);
-
 		if (ps2_bit_count == 11) {
 			ps2_data_now = 0x00;
 			if (0 == state_now) {
 				ps2_bit_count--;
 			}
-
 		} else {
 			if (ps2_bit_count < 11 && ps2_bit_count > 2) {
 				ps2_data_now = (ps2_data_now >> 1);
@@ -209,23 +206,16 @@ void EXTI0_IRQHandler(void) {
 					ps2_bit_count--;
 				} else if (ps2_bit_count == 1) {
 					ps2_bit_count = 11;
-					//ps2_check=1;
-					//ps2_data_now =(ps2_data_now<<1);
-					//printf("code:%02x\n",ps2_data_now);
 					u8 current_char = ps2_decode(ps2_data_now);
 					if (current_char != 0) {
-						printf("%c", current_char);
 						set_char(current_char);
 					}
-
 				}
 			}
 		}
 	}
-
 	exti_interrupt_flag_clear(EXTI_0);
 	//GPIO_BC(GPIOA) = LED_B;
-
 	//printf("in handler:%d  now%d\n", ps2_bit_count,state_now );
 }
 
@@ -245,53 +235,6 @@ void TIMER1_IRQHandler(void) {
 		ps2_check = 1;
 	}
 	//printf("clearok \n");
-}
-
-/*!
- \brief      timer config function
- \param[in]  timer num , interval ms
- \param[out] none
- \retval     none
- */
-void timer_config(uint32_t timer_periph, uint32_t time_interval_ms) {
-	timer_parameter_struct timer_initpara;
-
-	switch (timer_periph) {
-	case TIMER0:
-		rcu_periph_clock_enable(RCU_TIMER0);
-		break;
-	case TIMER1:
-		rcu_periph_clock_enable(RCU_TIMER1);
-		break;
-	case TIMER2:
-		rcu_periph_clock_enable(RCU_TIMER2);
-		break;
-	case TIMER3:
-		rcu_periph_clock_enable(RCU_TIMER3);
-		break;
-	case TIMER4:
-		rcu_periph_clock_enable(RCU_TIMER4);
-		break;
-	case TIMER5:
-		rcu_periph_clock_enable(RCU_TIMER5);
-		break;
-	case TIMER6:
-		rcu_periph_clock_enable(RCU_TIMER6);
-		break;
-	default:
-		break;
-	}
-	timer_deinit(timer_periph);
-	timer_struct_para_init(&timer_initpara);
-	timer_initpara.prescaler = 10799;	//108M/10800 = 10K Hz
-	timer_initpara.alignedmode = TIMER_COUNTER_EDGE;
-	timer_initpara.counterdirection = TIMER_COUNTER_UP;
-	timer_initpara.period = (uint32_t) 10 * time_interval_ms;//(uint32_t)1000000U/time_interval_us;
-	timer_initpara.clockdivision = TIMER_CKDIV_DIV1;
-	timer_init(timer_periph, &timer_initpara);
-
-	timer_interrupt_enable(timer_periph, TIMER_INT_UP);	//update interrupt
-	timer_enable(timer_periph);
 }
 
 /*!
