@@ -17,15 +17,15 @@ u32 ps2_check = 0;
 u32 ps2_data_now = 0;
 u8 ps2_buffer[10];
 u32 ps2_buffer_ptr;
-u32 cursur_x = 1;
-u32 cursur_y = 1;
+u32 cursur_x = 9;
+u32 cursur_y = 5;
 
 void set_char(u8 c_now) {
 	if (cursur_x > VGA_WIDTH - FONT_W) {
 		cursur_x = 0;
 		cursur_y += char_pixel_y;
 	}
-	if (cursur_y > VGA_HEIGHT - FONT_H) {
+	if (cursur_y > VGA_HEIGHT - FONT_H-FONT_HSPACE) {
 		cursur_x = 0;
 		cursur_y = 0;
 		vga_clear_screen();
@@ -50,7 +50,7 @@ void set_char(u8 c_now) {
 static u8 shifted[][2] = {
 
 };
-static u8 unshifted[][2] = { { 0x1c, 'a' }, { 0x32, 'b' }, { 0x21, 'c' }, {
+static u8 unshifted[][2] = { { 0x1c, 'a' }, { 0x5a, enter },{ 0x32, 'b' }, { 0x21, 'c' }, {
 		0x23, 'd' }, { 0x24, 'e' }, { 0x2b, 'f' }, { 0x34, 'g' }, { 0x33, 'h' },
 		{ 0x43, 'i' }, { 0x3b, 'j' }, { 0x42, 'k' }, { 0x4b, 'l' },
 		{ 0x3a, 'm' }, { 0x31, 'n' }, { 0x44, 'o' }, { 0x4d, 'p' },
@@ -62,13 +62,14 @@ static u8 unshifted[][2] = { { 0x1c, 'a' }, { 0x32, 'b' }, { 0x21, 'c' }, {
 		{ 0x0e, '`' }, { 0x4e, '-' }, { 0x55, '=' }, { 0x5d, '\\' }, { 0x66,
 				backspace }, { 0x29, ' ' }, { 0x54, '[' }, { 0x58, ']' }, {
 				0x4c, ';' }, { 0x52, '\'' }, { 0x41, ',' }, { 0x49, '.' }, {
-				0x4a, '/' }, { 0x0d, tab }, { 0x5a, enter },
+				0x4a, '/' }, { 0x0d, tab },
 //{0x58,caps},
 
 		};
 u8 scan_table(u8 code) {
 	for (int i = 0; i < 43; i++) {
 		if (code == unshifted[i][0]) {
+			//printf(" %02x \n",unshifted[i][0]);
 			return unshifted[i][1];
 		}
 	}
@@ -90,11 +91,11 @@ u8 ps2_decode(u8 code) {
 //printf("statusnow: break_status\n")
 	if (break_status) { //into print
 		break_status = 0;
-		//printf("code %02x\n",code);
+		//printf("code %02x \n",code);
 		u8 current_char = scan_table(code);
 		return current_char;
 		if (current_char != 0) {
-			printf("%c", current_char);
+			//printf("%c", current_char);
 			set_char(current_char);
 		}
 	}
@@ -172,7 +173,7 @@ void ps2_gpio_init(void) {
  */
 
 void ps2_exti_init(void) {
-	eclic_irq_enable(EXTI0_IRQn, 3, 3);
+	eclic_irq_enable(EXTI0_IRQn, 0, 0);
 	gpio_exti_source_select(GPIO_PORT_SOURCE_GPIOA, GPIO_PIN_SOURCE_0);
 	exti_init(EXTI_0, EXTI_INTERRUPT, EXTI_TRIG_FALLING); //configure key EXTI line
 	exti_interrupt_flag_clear(EXTI_0);

@@ -5,7 +5,7 @@ typedef struct{
 	u8 key;
 }keys;
 #define char_pixel_x  FONT_W
-#define char_pixel_y FONT_H
+#define char_pixel_y FONT_H+FONT_HSPACE
 #define true 1
 #define false 0
 #define char_invisible 0

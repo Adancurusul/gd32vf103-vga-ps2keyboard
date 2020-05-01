@@ -10,6 +10,11 @@
 #include "main.h"
 #if FONT_SIZE ==2040
 #include "ascii_2040.h"
+#elif FONT_SIZE==2416
+#include "ascii_2416.h"
+#elif FONT_SIZE==1608
+#include "ascii_1608.h"
+
 #endif
 
 #define	VID_HSIZE		75	// Horizontal resolution (in bytes)
@@ -42,8 +47,8 @@ int vi = 0, hi = 0, di = 0;
 #define VGA_WIDTH 600
 #define VGA_HEIGHT 300
 #define PIXEL_INIT 0x80
-u8 sursor_x = 0;
-u8 sursor_y = 0;
+u8 cursor_x = 0;
+u8 cursor_y = 0;
 
 void show_char(u16 x, u16 y, u8 ch);
 void set_sursor(u16 x, u16 y);
@@ -62,8 +67,8 @@ void clear_char(u16 x, u16 y) {
 	}
 	u8 ch = ' ';
 //printf("hello: %d\n",ch);
-	sursor_x = x;
-	sursor_y = y;
+	cursor_x = x;
+	cursor_y = y;
 	u32 h = 9;
 
 	for (lengthways = 0; lengthways < FONT_H; lengthways++) {
@@ -99,9 +104,11 @@ void show_char(u16 x, u16 y, u8 ch) {
 	}
 	ch = ch - ' ';
 //printf("hello: %d\n",ch);
-	sursor_x = x;
-	sursor_y = y;
+	//cursor_x = x;
+	//cursor_y = y;
 	u32 h = 9;
+//const unsigned char  vga_ascii[] =
+	//printf("                  \n   next  \n   \n \n");
 
 	for (lengthways = 0; lengthways < FONT_H; lengthways++) {
 
@@ -111,26 +118,33 @@ void show_char(u16 x, u16 y, u8 ch) {
 			//if(h%8)printf(" %02x ",temp);
 			//else{ printf(" %02x \n",temp);}
 			//h++;
+			vga_buffer[y][x / 8] = temp;
+			x+=8;
+			/*
 			for (i = 0; i < 8; i++) {
 				if (temp & 0x1) {
 					vga_buffer[y][x / 8] |= PIXEL_INIT >> (8 - x % 8);
+				printf("1");
 				}
-				//else{
-				//printf("0");
-				//}
+				else{
+				vga_buffer[y][x/8] &= ~(PIXEL_INIT >> (8 - x % 8));
+				printf("0");
+				}
 				temp = temp >> 1;
 				x++;
-			}
+			}*/
 		}
 		y++;
+		// printf(" \n x now is: %d \n",x);
 		x = x0;
 		t++;
 	}
+	//printf(" \n x now is: %d \n",x);
 }
 void set_sursor(u16 x, u16 y) {
 	if (x < VGA_WIDTH && x >= 0 && y < VGA_HEIGHT && y > 0) {
-		sursor_x = x;
-		sursor_y = y;
+		cursor_x = x;
+		cursor_y = y;
 	}
 }
 
@@ -200,7 +214,7 @@ void vga_timer_config(void) {
 	timer_channel_output_shadow_config(TIMER2, TIMER_CH_2,
 	TIMER_OC_SHADOW_DISABLE);
 
-	timer_channel_output_pulse_value_config(TIMER2, TIMER_CH_3, 512);
+	timer_channel_output_pulse_value_config(TIMER2, TIMER_CH_3, 520);
 	timer_channel_output_mode_config(TIMER2, TIMER_CH_3,
 	TIMER_OC_MODE_PWM1);
 	timer_channel_output_shadow_config(TIMER2, TIMER_CH_3,
@@ -360,7 +374,7 @@ void vga_full_screen(void) {
 
 	for (y = 0; y < VID_VSIZE; y++) {
 		for (x = 0; x < ARRAYSIZE; x++) {
-			vga_buffer[y][x] |= 0xfe;
+			vga_buffer[y][x] |= 0x01;
 		}
 	}
 }
