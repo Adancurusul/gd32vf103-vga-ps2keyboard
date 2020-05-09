@@ -143,7 +143,14 @@ int _put_char(int ch) {
 
 	return ch;
 }
+/*
+int _put_char(int ch) {
+	vga_print( (uint8_t) ch);
 
+
+	return ch;
+}
+*/
 /*!
  \brief      ps2 keyboard init function
  \param[in]  none

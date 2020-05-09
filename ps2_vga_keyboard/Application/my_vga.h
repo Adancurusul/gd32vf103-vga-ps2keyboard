@@ -37,5 +37,6 @@ void show_char(u16 x, u16 y, u8 ch);
 void clear_char(u16 x, u16 y);
 void set_sursor(u16 x, u16 y);
 void set_pixel(u16 x, u16 y);
-
+void vga_print(u8 ch);
+void show_string(u16 x,u16 y,const u8 *p);
 #endif /* APPLICATION_MY_VGA_H_ */

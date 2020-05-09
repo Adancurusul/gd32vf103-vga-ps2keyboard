@@ -17,7 +17,7 @@
 
 #endif
 
-#define	VID_HSIZE		75	// Horizontal resolution (in bytes)
+#define	VID_HSIZE		600/8	// Horizontal resolution (in bytes)
 #define	VID_VSIZE		300		// Vertical resolution (in lines)
 
 #define	VID_PIXELS_X	(VID_HSIZE * 8)
@@ -33,6 +33,7 @@
  *****************************************/
 #define ARRAYSIZE 75
 u8 vga_buffer[VID_VSIZE][VID_HSIZE + 0];
+//u8 vga_buffer[1][1];
 u32 counter = 0;
 
 static volatile u16 vline = 0;
@@ -57,6 +58,24 @@ void set_pixel(u16 x, u16 y) {
 	//u16 t = x/8;
 	//u16 n = x%8;
 	vga_buffer[y][x / 8] |= PIXEL_INIT >> (x % 8);
+}
+
+u16 vga_x=8;
+u16 vga_y=5;
+
+void vga_print(u8 ch){
+	if(ch=='\r'){
+		vga_x=8;
+		vga_y+=FONT_H;
+		show_char(28,20,'k');
+		vga_x+=FONT_W;
+		return;
+	}
+	if(vga_x>VGA_WIDTH - FONT_W){vga_x=0;vga_y+=FONT_H;}
+	if(vga_y>VGA_HEIGHT - FONT_H){vga_y=vga_x=0;vga_clear_screen();}
+	show_char(vga_x,vga_y,ch);
+	vga_x+=FONT_W;
+
 }
 void clear_char(u16 x, u16 y) {
 	u8 temp, i, t = 0;
@@ -95,6 +114,18 @@ void clear_char(u16 x, u16 y) {
 		t++;
 	}
 }
+void show_string(u16 x,u16 y,const u8 *p)
+{
+    while(*p!='\0')
+    {
+        if(x>VGA_WIDTH - FONT_W){x=0;y+=FONT_H;}
+        if(y>VGA_HEIGHT - FONT_H){y=x=0;vga_clear_screen();}
+        show_char(x,y,*p);
+        x+=FONT_W;
+        p++;
+    }
+}
+
 void show_char(u16 x, u16 y, u8 ch) {
 	u8 temp, i, t = 0;
 	u8 crosswise, lengthways;
