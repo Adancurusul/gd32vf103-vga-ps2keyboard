@@ -128,7 +128,7 @@ void show_string(u16 x,u16 y,const u8 *p)
 		
         
     }
-	delay_1ms(200);//change!!!!!
+	//delay_1ms(200);//change!!!!!
 }
 
 void show_char(u16 x, u16 y, u8 ch) {
