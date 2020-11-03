@@ -58,7 +58,18 @@ init_ps2_keyboard();
 
 init_vga();
 int k = 1;
-
+	rcu_periph_clock_enable(RCU_GPIOA);
+	rcu_periph_clock_enable(RCU_GPIOB);
+	rcu_periph_clock_enable(RCU_GPIOC);
+	//gpio_init(GPIOA, GPIO_MODE_OUT_PP, GPIO_OSPEED_50MHZ, LED_G);
+	//gpio_init(GPIOA, GPIO_MODE_OUT_PP, GPIO_OSPEED_50MHZ, LED_B);
+	//gpio_init(GPIOC, GPIO_MODE_OUT_PP, GPIO_OSPEED_50MHZ, LED_R);FF
+	gpio_init(GPIOB, GPIO_MODE_OUT_PP, GPIO_OSPEED_50MHZ, GPIO_PIN_8);
+	gpio_init(GPIOB, GPIO_MODE_OUT_PP, GPIO_OSPEED_50MHZ, GPIO_PIN_9);
+    gpio_init(GPIOB, GPIO_MODE_OUT_PP, GPIO_OSPEED_50MHZ, GPIO_PIN_5);
+    gpio_init(GPIOB, GPIO_MODE_IPU  , GPIO_OSPEED_50MHZ, GPIO_PIN_7);
+    gpio_bit_reset(GPIOB, GPIO_PIN_5);
+    /*
 show_string(k,1+FONT_H*0,"CRT  controller init ");
 show_string(k,1+FONT_H*1,"  ");
 show_string(k,1+FONT_H*2," ______     ______     ______   ______    ");
@@ -68,12 +79,15 @@ show_string(k,1+FONT_H*5," \\ \\_____\\  \\ \\_\\ \\_\\    \\ \\_\\  \\ \\_____\
 show_string(k,1+FONT_H*6,"  \\/_____/   \\/_/ /_/     \\/_/   \\/_____/ ");
 show_string(k,1+FONT_H*7,"  ");
 show_string(k,1+FONT_H*8,"Highspeed CRT controller :");
+delay_1ms(1000);
 show_string(k,1+FONT_H*9,"Buffer Size 39Kb");
+delay_1ms(1000);
 show_string(k,1+FONT_H*10,"    800*600@58Hz");
+delay_1ms(1000);
 show_string(k,1+FONT_H*11,"vga init finished");
 delay_1ms(500);
 show_string(k,1+FONT_H*12,"Ready to Reset...");
-delay_1ms(1000);
+delay_1ms(10000);
 vga_clear_screen();
 delay_1ms(1000);
 show_string(k,1+FONT_H*0,"  ,---.     ,--.               ");    
@@ -91,10 +105,15 @@ delay_1ms(1200);
 show_string(k,1+FONT_H*11,"INITIAL COMPLETE...");
 delay_1ms(1000);
 show_string(k,1+FONT_H*12,"    CPU     :   PRV464 SXR @ 40MHZ");
+delay_1ms(1000);
 show_string(k,1+FONT_H*13,"                8K+8K L1    OK");
+delay_1ms(1000);
 show_string(k,1+FONT_H*14,"    MEMORY  :   64MBYTE     OK");
+delay_1ms(1000);
 show_string(k,1+FONT_H*15,"    IO CTRL :   IOP408      OK");
+delay_1ms(1000);
 show_string(k,1+FONT_H*16,"    SDIO    :   NONE / $Vendor $Volume");
+delay_1ms(1000);
 show_string(k,1+FONT_H*17,"    ETH     :   NO CONN / STATIC IP XXX.XXX.XXX.XXX / DHCP");
 //show_string(1,1+FONT_H*18,"    FLASH   :   NOR/NAND $Volume");
 delay_1ms(2000);
@@ -120,7 +139,7 @@ show_string(k,1+FONT_H*13,"  \\___\\___/|_| |_| |_| .__/ \\__,_|\\__\\___|_|    
 show_string(k,1+FONT_H*14,"                     | |                                        ");
 show_string(k,1+FONT_H*15,"                     |_|    ");
 show_string(k,1+FONT_H*16,"No boot device! Press <F10>to setup.Press <F12>to select boot device.");
-
+*/
 
 
 //show_char(20,20,'h');
@@ -160,7 +179,23 @@ show_string(1,1+FONT_H*8,"/@@@/.....@@@@@......O@@@@/......@@@`.....=@@@@.......
  //printf("ready \n");
 
 */
+int flag_on = 0;
  while (1 == 1) {
+     if(!gpio_input_bit_get(GPIOB,GPIO_PIN_7)&&flag_on==0){
+gpio_init(GPIOB, GPIO_MODE_OUT_PP, GPIO_OSPEED_50MHZ, GPIO_PIN_8);
+	gpio_init(GPIOB, GPIO_MODE_OUT_PP, GPIO_OSPEED_50MHZ, GPIO_PIN_9);
+    gpio_bit_set(GPIOB, GPIO_PIN_9);
+    gpio_bit_set(GPIOB, GPIO_PIN_8);
+    flag_on=1;
+     }
+     else if(!gpio_input_bit_get(GPIOB,GPIO_PIN_7)&&flag_on==1){
+         gpio_init(GPIOB, GPIO_MODE_OUT_PP, GPIO_OSPEED_50MHZ, GPIO_PIN_8);
+	gpio_init(GPIOB, GPIO_MODE_OUT_PP, GPIO_OSPEED_50MHZ, GPIO_PIN_9);
+    gpio_bit_reset(GPIOB, GPIO_PIN_9);
+    gpio_bit_reset(GPIOB, GPIO_PIN_8);
+     flag_on=0;
+     };
+     delay_1ms(200);
   //printf("into_loop\n");
 
 //delay_1ms(100);

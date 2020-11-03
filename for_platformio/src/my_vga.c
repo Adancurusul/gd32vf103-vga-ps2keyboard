@@ -200,8 +200,8 @@ void vga_gpio_config(void) {
 	gpio_init(GPIOB, GPIO_MODE_IN_FLOATING, GPIO_OSPEED_50MHZ, GPIO_PIN_14);
 	gpio_init(GPIOB, GPIO_MODE_AF_PP, GPIO_OSPEED_50MHZ, GPIO_PIN_0);
 	gpio_init(GPIOB, GPIO_MODE_AF_PP, GPIO_OSPEED_50MHZ, GPIO_PIN_1);
-	gpio_init(GPIOB, GPIO_MODE_OUT_PP, GPIO_OSPEED_50MHZ, GPIO_PIN_6);
-	gpio_bit_set(GPIOB, GPIO_PIN_6);
+	gpio_init(GPIOB, GPIO_MODE_OUT_PP, GPIO_OSPEED_50MHZ, GPIO_PIN_12);//6
+	gpio_bit_set(GPIOB, GPIO_PIN_12);//6
 	gpio_init(GPIOB, GPIO_MODE_OUT_PP, GPIO_OSPEED_50MHZ, GPIO_PIN_7);
 	gpio_init(GPIOA, GPIO_MODE_AF_PP, GPIO_OSPEED_50MHZ,
 	GPIO_PIN_4 | GPIO_PIN_5 | GPIO_PIN_7);
@@ -250,7 +250,7 @@ void vga_timer_config(void) {
 	timer_channel_output_shadow_config(TIMER2, TIMER_CH_2,
 	TIMER_OC_SHADOW_DISABLE);
 
-	timer_channel_output_pulse_value_config(TIMER2, TIMER_CH_3, 400);//520??
+	timer_channel_output_pulse_value_config(TIMER2, TIMER_CH_3, 520);//520??400
 	timer_channel_output_mode_config(TIMER2, TIMER_CH_3,
 	TIMER_OC_MODE_PWM1);
 	timer_channel_output_shadow_config(TIMER2, TIMER_CH_3,
@@ -327,7 +327,7 @@ void TIMER2_IRQHandler(void) {
 		timer_interrupt_flag_clear(TIMER2, TIMER_INT_FLAG_CH2);
 
 		if (counter == 2) {
-			GPIO_BOP(GPIOB) = GPIO_PIN_6;
+			GPIO_BOP(GPIOB) = GPIO_PIN_12;//6
 			counter += 1;
 		} else if (counter == 24) {
 			//GPIO_BOP(gpio_periph) = (uint32_t) pin;
@@ -338,7 +338,7 @@ void TIMER2_IRQHandler(void) {
 			counter = 0;
 			//GPIO_BC(GPIOB) = GPIO_PIN_15;
 		} else if (counter == 0) {
-			GPIO_BC(GPIOB) = GPIO_PIN_6;
+			GPIO_BC(GPIOB) = GPIO_PIN_12;//6
 			counter += 1;
 			//printf("okse\n");
 		} else {
